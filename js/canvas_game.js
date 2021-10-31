@@ -1,12 +1,19 @@
 var betutipus = ["Arial","Verdana","Helvetica","Tahoma","Trebuchet MS","Times New Roman","Georgia","Garamond","Courier New","Brush Script MT"];
 var kozepsojo = ["ok","🦍","😳"];
 var kozepsorossz = ["asd","🤢","jó"];
+
 var adatok = [];
 var nehezseg = 3;
-var AdatLetrehoz2;
+var timeLeft = 30;
+var pont = 0;
+
+var Resi = setInterval( canvasResi, 30 );
+var timer = setInterval(updateTimer, 1000);
+var timerujra;
+
 class adat
 {
-  constructor( xpoz, ypoz, font, text, elet, rr, rg, ry, opacity ) 
+  constructor( xpoz, ypoz, font, text, elet, rr, rg, ry, opacity, pontotAd ) 
   {
     this.xpoz = xpoz;
     this.ypoz = ypoz;
@@ -17,21 +24,21 @@ class adat
 	this.rg = rg;
 	this.ry = ry;
 	this.opacity = opacity;
+	this.pAd = pontotAd;
   }
 }
 
 $(document).ready(
 function()
 {
-	var Resi = setInterval( canvasResi, 30 );
-	var AdatLetrehoz = setInterval( setComponent, 3000 - nehezseg * 400 );
+	setComponent();
+	updateTimer();
 	
 	$(".n_gomb").click(
 	function()
 	{
-		clearInterval( AdatLetrehoz );
-		clearInterval( AdatLetrehoz2 );
-		
+		clearInterval( timer );
+		clearInterval( timerujra );
 		if( $(this).hasClass("konnyu_gomb") )
 		{
 			nehezseg--;
@@ -45,7 +52,13 @@ function()
 			nehezseg--;
 		}
 		$(".nehezseg_mutato").html("Nehézség: "+nehezseg );
-		AdatLetrehoz2 = setInterval( setComponent, 1500 - nehezseg * 200 );
+		
+		timeLeft = 30;
+		timerujra = setInterval(updateTimer, 1000);
+		$(".timer").html("A hátramaradt idő: "+timeLeft+" másodperc");
+		
+		pont = 0;
+		$(".pont_holder").html("A pontjaid száma: "+pont );
 	});
 });
 
@@ -54,10 +67,12 @@ function setComponent()
 	if( Math.random() > 0.5 )
 	{
 		var megfelelo = kozepsojo[ Math.floor( Math.random() * 3 ) ];
+		var pontotAd = true;
 	}
 	else
 	{
 		var megfelelo = kozepsorossz[ Math.floor( Math.random() * 3 ) ];
+		var pontotAd = false;
 	}
 	
 	var c = document.getElementById("canvas");
@@ -113,9 +128,9 @@ function setComponent()
 		var rg = Math.floor( Math.random() * 256 );
 		var ry = Math.floor( Math.random() * 256 );
 		var opacity = 1;
-		var elet = 200/ nehezseg;
+		var elet = 200 / nehezseg;
 	
-		var ujadat = new adat( xpoz, ypoz, font, text, elet, rr, rg, ry, opacity  );
+		var ujadat = new adat( xpoz, ypoz, font, text, elet, rr, rg, ry, opacity, pontotAd  );
 		adatok.push( ujadat );
 	}
 }
@@ -147,7 +162,7 @@ function canvasResi()
 	{
 		p.fillStyle = "rgba("+adatok[i].rr+","+adatok[i].rg+","+adatok[i].ry+","+adatok[i].opacity+")";
 		p.strokeStyle = "rgba(0,0,0,"+adatok[i].opacity+")";
-		p.font = "30px "+betutipus;
+		p.font = "30px "+adatok[i].font;
 		
 		p.fillText( adatok[i].text, adatok[i].xpoz, adatok[i].ypoz );
 		p.strokeText( adatok[i].text, adatok[i].xpoz, adatok[i].ypoz );
@@ -162,7 +177,7 @@ function koordcsere( egyadat, cw, ch )
 	if( egyadat.elet > 1 )
 	{
 		egyadat.ypoz += nehezseg * 1.5;
-		egyadat.opacity -= egyadat.opacity / ( 200 / nehezseg );
+		egyadat.opacity -= ( nehezseg / 200);
 		egyadat.elet--;
 	}
 	else
@@ -180,14 +195,22 @@ document.onmouseup = function(e)
 	
 	for( var i = 0; i < adatok.length; i++ )
 	{
-		console.log("egérX: "+ePos.x+" , adatX: "+adatok[i].xpoz+" , egérY: "+ePos.y+" , adatY: "+adatok[i].ypoz);
+		//console.log("egérX: "+ePos.x+" , adatX: "+adatok[i].xpoz+" , egérY: "+ePos.y+" , adatY: "+adatok[i].ypoz);
 		if
 		(
-			ePos.x >= adatok[i].xpoz && ePos.x <= adatok[i].xpoz + adatok[i].text.length * 20 &&
-			ePos.y >= adatok[i].ypoz - 40 && ePos.y <= adatok[i].ypoz + 10
+			ePos.x >= adatok[i].xpoz - 10 && ePos.x <= adatok[i].xpoz + adatok[i].text.length * 21 &&
+			ePos.y >= adatok[i].ypoz - 60 && ePos.y <= adatok[i].ypoz + 20
 		)
 		{
-			adatok.splice( adatok[i] , 1 );
+			if( adatok[i].pAd )
+			pont++;
+			else
+			pont--;
+			
+			adatok[i].xpoz = -1000;
+			adatok[i].ypoz = -1000;
+			//adatok[i].elet = 0; --> Se ez, se a slice nem működik és fogalmam sincs, hogy miért.
+			$(".pont_holder").html("A pontjaid száma: "+pont );
 		}
 	}
 }
@@ -203,4 +226,38 @@ function getMousePos(c, e)
 		y: (e.clientY - rect.top) * scaleY
 	};
     return ligma;
+}
+
+function takarit()
+{
+	var c = document.getElementById("canvas");
+	var p = c.getContext("2d");
+	var cw = c.offsetWidth;
+	var ch = c.offsetHeight;
+	p.clearRect(0, 0, cw, ch);
+}
+
+function updateTimer()
+{
+	timeLeft -= 1;
+	
+	setTimeout(
+	function()
+	{
+		setComponent();
+	}, Math.random() * 1500 + 1000 - nehezseg * 100 );
+	
+	
+	if( timeLeft >= 0 )
+	$(".timer").html("A hátramaradt idő: "+timeLeft+" másodperc");
+	else 
+	gameOver();
+}
+
+function gameOver() 
+{
+	clearInterval( timer );
+	clearInterval( timerujra );
+	clearInterval( Resi );
+	takarit();
 }
