@@ -37,4 +37,5 @@ body
 	border:1px solid red;
 	margin:50px;
 	-webkit-box-sizing:border-box;
+	display:none;
 }
