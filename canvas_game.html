@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width">
 
 	<head>
-		<title>Hackeres Játék 2</title>
+		<title>Hackeres Játék 2.0</title>
 	
 		<script src="jquery/jquery-1.8.2.js" type="text/javascript">
 		</script>
@@ -26,23 +26,33 @@
 	</head>
 	<body>
 		<section class="jatekkezdo_doboz">
-			<div class="leiras_doboz"></div>
-			<button class="gomb k_gomb">A játék kezdése</button>
+			<button class="gomb k_gomb hover">A játék kezdése</button>
+		</section>
+		<section class ="nehezseg_doboz fade">
+			<button class="gomb n_gomb nehez_gomb hover" id="nehez">+</button>
+			<button class="gomb n_gomb konnyu_gomb hover" id ="konnyu">-</button>
 		</section>
 		
-		<section>
-			<canvas id="canvas" width="1700" height="950"></canvas>
-		</section>
+		<section class="canvas_doboz fade"><canvas id="canvas" height="100" width="100"></canvas></section>
 		
-		<section class="info_doboz">
-			<div class="nehezseg_mutato">Nehézség: 3</div>
-			<button class="gomb n_gomb nehez_gomb">+</button>
-			<button class="gomb n_gomb konnyu_gomb">-</button>
+		<section class="info_doboz fade">
+			<div class="nehezseg_mutato">Nehézségi szint: 3</div>
 			<div class="visszaszamlalo">A hátramaradt idő: 60 másodperc</div>
 			<div class="pont_holder">A pontjaid száma: 0</div>
+			<div class="leiras">Lorem
+ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sodales
+mauris orci, et ultrices augue molestie et. Maecenas at massa dapibus,
+aliquam nulla vel, rutrum quam. Mauris sollicitudin leo mauris, non
+venenatis ante iaculis vel. Phasellus magna elit, bibendum non pharetra
+at, pulvinar aliquam felis. Nunc ac tincidunt eros, a finibus eros. Sed
+non luctus nisi. Aliquam erat volutpat. Fusce tempus et massa commodo
+vestibulum. Etiam sed porta quam, vitae tincidunt mauris. Etiam mi
+felis, volutpat sed tempus sit amet, ornare a mauris. Aliquam elementum
+magna a lacus convallis, vel pellentesque odio lacinia. Suspendisse
+congue, neque non tristique interdum, massa.</div>
 		</section>
 		
-		<section class="ab_alert_doboz">
+		<section class="ab_alert_doboz fade">
 			<div class="ab_jelzo">
 				<div class="ability hasznalhato ab1">Q</div>
 				<div class="ability hasznalhato ab2">W</div>
