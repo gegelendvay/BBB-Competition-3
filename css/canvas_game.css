@@ -35,7 +35,39 @@ body
 #canvas
 {
 	border:1px solid red;
-	margin:50px;
+	margin:100px;
+	margin-top:10px;
+	margin-bottom:10px;
 	-webkit-box-sizing:border-box;
 	display:none;
+}
+
+.ab_alert_doboz
+{
+	position:absolute;
+	background:#421111;
+	top:100px;
+	left:-5px;
+	border:2px solid black;
+	height:200px;
+	width:80px;
+	-webkit-user-select:none;
+	border-radius:5px;
+	display:none;
+}
+
+.ability
+{
+	border:3px solid gold;
+	border-radius:10px;
+	width:90%;
+	height:60px;
+	line-height:55px;
+	vertical-align:middle;
+	text-align:center;
+	font-size:45px;
+	color:gold;
+	margin-left:5px;
+	margin-bottom:10px;
+	-webkit-box-sizing:border-box;
 }
