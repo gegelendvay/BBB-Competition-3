@@ -7,8 +7,12 @@ var nehezseg = 3;
 var timeLeft = 30;
 var pont = 0;
 
-var Resi = setInterval( canvasResi, 30 );
-var timer = setInterval(updateTimer, 1000);
+var ab1;
+var ab2;
+var ab3;
+
+var Resi;
+var timer;
 var timerujra;
 
 class adat
@@ -31,8 +35,17 @@ class adat
 $(document).ready(
 function()
 {
-	setComponent();
-	updateTimer();
+	$(".k_gomb").click(
+	function()
+	{
+		$(".jatekkezdo_doboz").hide();
+		$("#canvas").show();
+		Resi = setInterval( canvasResi, 30 );
+		timer = setInterval(updateTimer, 1000);
+		setComponent();
+		updateTimer();
+		adatLoop();
+	});
 	
 	$(".n_gomb").click(
 	function()
@@ -48,14 +61,18 @@ function()
 		else
 		{
 			nehezseg++;
-			if( nehezseg == 6 )
+			if( nehezseg == 7 )
 			nehezseg--;
 		}
+		
+		if( nehezseg == 6 )
+		$(".nehezseg_mutato").html("Nehézség: HARDCORE");
+		else
 		$(".nehezseg_mutato").html("Nehézség: "+nehezseg );
 		
 		timeLeft = 30;
-		timerujra = setInterval(updateTimer, 1000);
-		$(".timer").html("A hátramaradt idő: "+timeLeft+" másodperc");
+		if( $("#canvas").css("display") != "none" ){ timerujra = setInterval(updateTimer, 1000); }
+		$(".visszaszamlalo").html("A hátramaradt idő: "+timeLeft+" másodperc");
 		
 		pont = 0;
 		$(".pont_holder").html("A pontjaid száma: "+pont );
@@ -182,40 +199,75 @@ function koordcsere( egyadat, cw, ch )
 	}
 	else
 	{
+		if( egyadat.pAd )
+		{
+			if( nehezseg == 6 )
+			{
+				gameOver();
+				timeLeft = 0;
+				$(".visszaszamlalo").html("A hátramaradt idő: "+timeLeft+" másodperc");
+			}
+			pont--;
+			$(".pont_holder").html("A pontjaid száma: "+pont );
+		}
 		adatok.splice( egyadat , 1 );
 		p.clearRect(0, 0, cw, ch);
 	}
 }
 
-document.onmouseup = function(e)
+$(document).on("mouseup" , function(e)
 {
 	var c = document.getElementById("canvas");
 	var p = c.getContext("2d");
-	var ePos = getMousePos(c, e);
+	var ePoz = getMousePoz(c, e);
 	
 	for( var i = 0; i < adatok.length; i++ )
 	{
-		//console.log("egérX: "+ePos.x+" , adatX: "+adatok[i].xpoz+" , egérY: "+ePos.y+" , adatY: "+adatok[i].ypoz);
+		//console.log("egérX: "+ePoz.x+" , adatX: "+adatok[i].xpoz+" , egérY: "+ePoz.y+" , adatY: "+adatok[i].ypoz);
 		if
 		(
-			ePos.x >= adatok[i].xpoz - 10 && ePos.x <= adatok[i].xpoz + adatok[i].text.length * 21 &&
-			ePos.y >= adatok[i].ypoz - 60 && ePos.y <= adatok[i].ypoz + 20
+			ePoz.x >= adatok[i].xpoz - 10 && ePoz.x <= adatok[i].xpoz + adatok[i].text.length * 21 &&
+			ePoz.y >= adatok[i].ypoz - 60 && ePoz.y <= adatok[i].ypoz + 20
 		)
 		{
 			if( adatok[i].pAd )
 			pont++;
+			else if( nehezseg == 6 )
+			{
+				timeLeft = 0;
+				gameOver();
+				$(".visszaszamlalo").html("A hátramaradt idő: "+timeLeft+" másodperc");
+				pont--;
+			}
 			else
 			pont--;
 			
 			adatok[i].xpoz = -1000;
 			adatok[i].ypoz = -1000;
+			adatok[i].pAd = false;
 			//adatok[i].elet = 0; --> Se ez, se a slice nem működik és fogalmam sincs, hogy miért.
 			$(".pont_holder").html("A pontjaid száma: "+pont );
 		}
 	}
-}
+});
 
-function getMousePos(c, e)
+$(document).on("keyup" , function(e)
+{
+	if( e.keyCode == 81 ) //Q
+	{
+		
+	}
+	if( e.keyCode == 87 ) //W
+	{
+		
+	}
+	if( e.keyCode == 69 ) //E
+	{
+		
+	}
+});
+
+function getMousePoz(c, e)
 {
     var rect = c.getBoundingClientRect(),
 		scaleX = c.width / rect.width,
@@ -241,23 +293,50 @@ function updateTimer()
 {
 	timeLeft -= 1;
 	
-	setTimeout(
-	function()
-	{
-		setComponent();
-	}, Math.random() * 1500 + 1000 - nehezseg * 100 );
-	
-	
 	if( timeLeft >= 0 )
-	$(".timer").html("A hátramaradt idő: "+timeLeft+" másodperc");
+	$(".visszaszamlalo").html("A hátramaradt idő: "+timeLeft+" másodperc");
 	else 
 	gameOver();
 }
 
-function gameOver() 
+function adatLoop()
+{
+	var rand = Math.random() * 1500 + 1000 - nehezseg * 100;
+	setTimeout(
+	function()
+	{
+		setComponent();
+		adatLoop();  
+	}, rand );
+}
+
+function gameOver()
 {
 	clearInterval( timer );
 	clearInterval( timerujra );
 	clearInterval( Resi );
 	takarit();
+	$("#canvas").animate(
+	{
+		"opacity":"0"
+	},
+	2000,
+	function()
+	{
+		$("#canvas").hide();
+		$("#canvas").css(
+		{
+			"opacity":"1"
+		});
+		$(".jatekkezdo_doboz").show();
+		setTimeout(
+		function()
+		{
+			alert("A pontjaid száma: "+pont );
+			pont = 0;
+			$(".pont_holder").html("A pontjaid száma: "+pont );
+		}, 1000 );
+	});
+	
+	//$('#playAgainButton').show();
 }
