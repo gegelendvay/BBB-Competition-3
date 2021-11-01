@@ -4,12 +4,14 @@ var kozepsorossz = ["asd","🤢","jó"];
 
 var adatok = [];
 var nehezseg = 3;
-var timeLeft = 30;
+var sebesseg = 1.2;
+
+var MaxTime = 60;
+var timeLeft = MaxTime;
 var pont = 0;
 
-var ab1;
-var ab2;
-var ab3;
+var ab1 = false;
+var ab2 = false;
 
 var Resi;
 var timer;
@@ -38,9 +40,16 @@ function()
 	$(".k_gomb").click(
 	function()
 	{
+		if( timeLeft != MaxTime )
+		{
+			location.reload();
+		}
+		
 		$(".jatekkezdo_doboz").hide();
+		$(".ab_alert_doboz").show();
 		$("#canvas").show();
 		Resi = setInterval( canvasResi, 30 );
+		timeLeft = MaxTime;
 		timer = setInterval(updateTimer, 1000);
 		setComponent();
 		updateTimer();
@@ -70,7 +79,7 @@ function()
 		else
 		$(".nehezseg_mutato").html("Nehézség: "+nehezseg );
 		
-		timeLeft = 30;
+		timeLeft = MaxTime;
 		if( $("#canvas").css("display") != "none" ){ timerujra = setInterval(updateTimer, 1000); }
 		$(".visszaszamlalo").html("A hátramaradt idő: "+timeLeft+" másodperc");
 		
@@ -141,9 +150,26 @@ function setComponent()
 	{
 		var font = betutipus[ Math.floor( Math.random() * 9 ) ];
 		var text = Math.floor( Math.random() * 10000 )+""+megfelelo+""+Math.floor( Math.random() * 10000 );
-		var rr = Math.floor( Math.random() * 256 );
-		var rg = Math.floor( Math.random() * 256 );
-		var ry = Math.floor( Math.random() * 256 );
+		
+		if( !ab1 )
+		{
+			var rr = Math.floor( Math.random() * 256 );
+			var rg = Math.floor( Math.random() * 256 );
+			var ry = Math.floor( Math.random() * 256 );
+		}
+		else if( pontotAd )
+		{
+			var rr = 255;
+			var rg = 0;
+			var ry = 0;
+		}
+		else
+		{
+			var rr = 60;
+			var rg = 60;
+			var ry = 60;
+		}
+		
 		var opacity = 1;
 		var elet = 200 / nehezseg;
 	
@@ -193,7 +219,7 @@ function koordcsere( egyadat, cw, ch )
 	
 	if( egyadat.elet > 1 )
 	{
-		egyadat.ypoz += nehezseg * 1.5;
+		egyadat.ypoz += nehezseg * ( sebesseg + nehezseg / 10);
 		egyadat.opacity -= ( nehezseg / 200);
 		egyadat.elet--;
 	}
@@ -255,15 +281,60 @@ $(document).on("keyup" , function(e)
 {
 	if( e.keyCode == 81 ) //Q
 	{
+		ab1 = true;
+		$(".ab1").css(
+		{
+			"border":"3px solid red",
+			"background":"white",
+			"color":"red"
+		});
 		
+		setTimeout(
+		function()
+		{
+			ab1 = false;
+			$(".ab1").css(
+			{
+				"border":"3px solid black",
+				"background":"#333333",
+				"color":"black"
+			});
+		},10000);
 	}
 	if( e.keyCode == 87 ) //W
 	{
+		ab2 = true;
+		var elozoS = sebesseg;
+		sebesseg = nehezseg / 10 * (-1);
+		$(".ab2").css(
+		{
+			"border":"3px solid red",
+			"background":"white",
+			"color":"red"
+		});
 		
+		setTimeout(
+		function()
+		{
+			ab1 = false;
+			sebesseg = elozoS;
+			$(".ab2").css(
+			{
+				"border":"3px solid black",
+				"background":"#333333",
+				"color":"black"
+			});
+		},5000);
 	}
 	if( e.keyCode == 69 ) //E
 	{
-		
+		timeLeft += pont * 10;
+		$(".ab3").css(
+		{
+			"border":"3px solid black",
+			"background":"#333333",
+			"color":"black"
+		});
 	}
 });
 
@@ -301,7 +372,7 @@ function updateTimer()
 
 function adatLoop()
 {
-	var rand = Math.random() * 1500 + 1000 - nehezseg * 100;
+	var rand = Math.random() * 1000 + 1000 - nehezseg * 100;
 	setTimeout(
 	function()
 	{
@@ -328,7 +399,10 @@ function gameOver()
 		{
 			"opacity":"1"
 		});
+		$(".k_gomb").html("A játék újratöltése");
 		$(".jatekkezdo_doboz").show();
+		$(".ab_alert_doboz").hide();
+		$(".info_doboz").hide();
 		setTimeout(
 		function()
 		{
