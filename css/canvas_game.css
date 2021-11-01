@@ -145,12 +145,12 @@ body
 	
 }
 
-.nehezseg_mutato , .visszaszamlalo , .pont_holder , .leiras
+.nehezseg_mutato , .visszaszamlalo , .pont_holder
 {
 	padding-top:20px;
 }
 
 .leiras
 {
-	padding-bottom:20px;
+	padding:20px;
 }
