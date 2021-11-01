@@ -447,10 +447,10 @@ function gameOver()
 		
 	});
 	setTimeout(
-		function()
-		{
-			alert("A pontjaid száma: "+pont );
-			pont = 0;
-			$(".pont_holder").html("A pontjaid száma: "+pont );
-		}, 2000 );
+	function()
+	{
+		alert("A pontjaid száma: "+pont );
+		pont = 0;
+		$(".pont_holder").html("A pontjaid száma: "+pont );
+	}, 2000 );
 }
