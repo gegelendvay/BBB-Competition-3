@@ -1,6 +1,6 @@
 var betutipus = ["Arial","Verdana","Helvetica","Tahoma","Trebuchet MS","Times New Roman","Georgia","Garamond","Courier New","Brush Script MT"];
-var kozepsojo = ["ok","🦍","😳"];
-var kozepsorossz = ["asd","🤢","jó"];
+var kozepsojo = ["ok","🦍","😳","BBB"];
+var kozepsorossz = ["asd","🤢","jó","LoL","CTR"];
 
 var adatok = [];
 var nehezseg = 3;
@@ -45,7 +45,13 @@ function()
 		}
 		
 		$(".jatekkezdo_doboz").hide();
+		$(".jatekkezdo_doboz").css({"opacity":"0"});
+		$(".nehezseg_doboz").hide();
 		$(".ab_alert_doboz").show();
+		var sz = window.innerWidth*0.75;
+		var m = window.innerHeight*0.75;
+		$(".canvas_doboz").empty();
+		$(".canvas_doboz").html('<canvas id="canvas" height="'+m+'" width="'+sz+'"></canvas>');
 		$("#canvas").show();
 		Resi = setInterval( canvasResi, 30 );
 		timeLeft = MaxTime;
@@ -60,11 +66,22 @@ function()
 	{
 		clearInterval( timer );
 		clearInterval( timerujra );
+		if( $(".n_gomb").hasClass("disabled") )
+		{
+			$(".n_gomb").removeClass("disabled");
+			$(".n_gomb").addClass("hover");
+		}
 		if( $(this).hasClass("konnyu_gomb") )
 		{
 			nehezseg--;
 			if( nehezseg == 0 )
 			nehezseg++;
+			if( nehezseg == 1 )
+			{
+				
+				$(this).addClass("disabled");
+				$(this).removeClass("hover");
+			}
 		}
 		else
 		{
@@ -74,9 +91,13 @@ function()
 		}
 		
 		if( nehezseg == 6 )
-		$(".nehezseg_mutato").html("Nehézség: HARDCORE");
+		{
+			$(".nehezseg_mutato").html("Nehézségi szint: HARDCORE");
+			$(this).addClass("disabled");
+			$(this).removeClass("hover");
+		}
 		else
-		$(".nehezseg_mutato").html("Nehézség: "+nehezseg );
+		$(".nehezseg_mutato").html("Nehézségi szint: "+nehezseg );
 		
 		timeLeft = MaxTime;
 		if( $("#canvas").css("display") != "none" ){ timerujra = setInterval(updateTimer, 1000); }
@@ -91,12 +112,12 @@ function setComponent()
 {
 	if( Math.random() > 0.5 )
 	{
-		var megfelelo = kozepsojo[ Math.floor( Math.random() * 3 ) ];
+		var megfelelo = kozepsojo[ Math.floor( Math.random() * kozepsojo.length ) ];
 		var pontotAd = true;
 	}
 	else
 	{
-		var megfelelo = kozepsorossz[ Math.floor( Math.random() * 3 ) ];
+		var megfelelo = kozepsorossz[ Math.floor( Math.random() * kozepsorossz.length ) ];
 		var pontotAd = false;
 	}
 	
@@ -106,7 +127,7 @@ function setComponent()
 	var ch = c.offsetHeight;
 	
 	var xpoz = Math.floor( Math.random() * ( cw - 300 ) + 50 );
-	var ypoz = Math.floor( Math.random() * ( ch / 2 ) + 100 );
+	var ypoz = Math.floor( Math.random() * ( ch / 4 ) + 50 );
 	
 	if( adatok.length != 0 )
 	{
@@ -290,9 +311,9 @@ $(document).on("keyup" , function(e)
 		$(".ab1").removeClass("hasznalhato");
 		$(".ab1").css(
 		{
-			"border":"3px solid red",
-			"background":"white",
-			"color":"red"
+			"border":"4px solid #9948AD",
+			"background":"#F4FDAF",
+			"color":"#9948AD"
 		});
 		
 		for( var i = 0; i < adatok.length; i++ )
@@ -317,8 +338,8 @@ $(document).on("keyup" , function(e)
 			ab1 = false;
 			$(".ab1").css(
 			{
-				"border":"3px solid black",
-				"background":"#333333",
+				"border":"4px solid black",
+				"background":"#555555",
 				"color":"black"
 			});
 		},10000);
@@ -329,9 +350,9 @@ $(document).on("keyup" , function(e)
 		$(".ab2").removeClass("hasznalhato");
 		$(".ab2").css(
 		{
-			"border":"3px solid red",
-			"background":"white",
-			"color":"red"
+			"border":"4px solid #9948AD",
+			"background":"#F4FDAF",
+			"color":"#9948AD"
 		});
 		
 		setTimeout(
@@ -340,8 +361,8 @@ $(document).on("keyup" , function(e)
 			ab2 = false;
 			$(".ab2").css(
 			{
-				"border":"3px solid black",
-				"background":"#333333",
+				"border":"4px solid black",
+				"background":"#555555",
 				"color":"black"
 			});
 		},5000);
@@ -352,8 +373,8 @@ $(document).on("keyup" , function(e)
 		$(".ab3").removeClass("hasznalhato");
 		$(".ab3").css(
 		{
-			"border":"3px solid black",
-			"background":"#333333",
+			"border":"4px solid black",
+			"background":"#555555",
 			"color":"black"
 		});
 	}
@@ -408,30 +429,28 @@ function gameOver()
 	clearInterval( timerujra );
 	clearInterval( Resi );
 	takarit();
-	$("#canvas").animate(
+	$(".fade").animate(
 	{
 		"opacity":"0"
 	},
 	2000,
 	function()
 	{
-		$("#canvas").hide();
-		$("#canvas").css(
+		$(".fade").hide();
+		$(".fade").css(
 		{
 			"opacity":"1"
 		});
 		$(".k_gomb").html("A játék újratöltése");
 		$(".jatekkezdo_doboz").show();
-		$(".ab_alert_doboz").hide();
-		$(".info_doboz").hide();
-		setTimeout(
+		$(".jatekkezdo_doboz").animate({"opacity":"1"},2000);
+		
+	});
+	setTimeout(
 		function()
 		{
 			alert("A pontjaid száma: "+pont );
 			pont = 0;
 			$(".pont_holder").html("A pontjaid száma: "+pont );
-		}, 1000 );
-	});
-	
-	//$('#playAgainButton').show();
+		}, 2000 );
 }
