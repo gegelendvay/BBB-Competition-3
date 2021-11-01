@@ -283,9 +283,11 @@ $(document).on("mouseup" , function(e)
 
 $(document).on("keyup" , function(e)
 {
-	if( e.keyCode == 81 ) //Q
+	if( e.keyCode == 81 && nehezseg != 6 && $(".ab1").hasClass("hasznalhato") ) //Q
 	{
 		ab1 = true;
+		
+		$(".ab1").removeClass("hasznalhato");
 		$(".ab1").css(
 		{
 			"border":"3px solid red",
@@ -321,9 +323,10 @@ $(document).on("keyup" , function(e)
 			});
 		},10000);
 	}
-	if( e.keyCode == 87 ) //W
+	if( e.keyCode == 87 && nehezseg != 6 && $(".ab2").hasClass("hasznalhato") ) //W
 	{
 		ab2 = true;
+		$(".ab2").removeClass("hasznalhato");
 		$(".ab2").css(
 		{
 			"border":"3px solid red",
@@ -343,9 +346,10 @@ $(document).on("keyup" , function(e)
 			});
 		},5000);
 	}
-	if( e.keyCode == 69 ) //E
+	if( e.keyCode == 69 && $(".ab3").hasClass("hasznalhato") ) //E
 	{
 		timeLeft += pont * 2;
+		$(".ab3").removeClass("hasznalhato");
 		$(".ab3").css(
 		{
 			"border":"3px solid black",
