@@ -4,7 +4,6 @@ var kozepsorossz = ["asd","🤢","jó"];
 
 var adatok = [];
 var nehezseg = 3;
-var sebesseg = 1.2;
 
 var MaxTime = 60;
 var timeLeft = MaxTime;
@@ -208,6 +207,8 @@ function canvasResi()
 		p.font = "30px "+adatok[i].font;
 		
 		p.fillText( adatok[i].text, adatok[i].xpoz, adatok[i].ypoz );
+		
+		if( !ab1 )
 		p.strokeText( adatok[i].text, adatok[i].xpoz, adatok[i].ypoz );
 	}
 }
@@ -219,9 +220,12 @@ function koordcsere( egyadat, cw, ch )
 	
 	if( egyadat.elet > 1 )
 	{
-		egyadat.ypoz += nehezseg * ( sebesseg + nehezseg / 10);
-		egyadat.opacity -= ( nehezseg / 200);
-		egyadat.elet--;
+		if( !ab2 )
+		{
+			egyadat.ypoz += nehezseg * ( 1.2 + nehezseg / 10);
+			egyadat.opacity -= ( nehezseg / 200);
+			egyadat.elet--;
+		}
 	}
 	else
 	{
@@ -289,6 +293,22 @@ $(document).on("keyup" , function(e)
 			"color":"red"
 		});
 		
+		for( var i = 0; i < adatok.length; i++ )
+		{
+			if( adatok[i].pAd )
+			{
+				adatok[i].rr = 255;
+				adatok[i].rg = 0;
+				adatok[i].rb = 0;
+			}
+			else
+			{
+				adatok[i].rr = 60;
+				adatok[i].rg = 60;
+				adatok[i].rb = 60;
+			}
+		}
+		
 		setTimeout(
 		function()
 		{
@@ -304,8 +324,6 @@ $(document).on("keyup" , function(e)
 	if( e.keyCode == 87 ) //W
 	{
 		ab2 = true;
-		var elozoS = sebesseg;
-		sebesseg = nehezseg / 10 * (-1);
 		$(".ab2").css(
 		{
 			"border":"3px solid red",
@@ -316,8 +334,7 @@ $(document).on("keyup" , function(e)
 		setTimeout(
 		function()
 		{
-			ab1 = false;
-			sebesseg = elozoS;
+			ab2 = false;
 			$(".ab2").css(
 			{
 				"border":"3px solid black",
@@ -328,7 +345,7 @@ $(document).on("keyup" , function(e)
 	}
 	if( e.keyCode == 69 ) //E
 	{
-		timeLeft += pont * 10;
+		timeLeft += pont * 2;
 		$(".ab3").css(
 		{
 			"border":"3px solid black",
