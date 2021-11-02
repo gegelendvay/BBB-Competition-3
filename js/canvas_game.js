@@ -53,12 +53,17 @@ function()
 		$(".canvas_doboz").empty();
 		$(".canvas_doboz").html('<canvas id="canvas" height="'+m+'" width="'+sz+'"></canvas>');
 		$("#canvas").show();
-		Resi = setInterval( canvasResi, 30 );
-		timeLeft = MaxTime;
-		timer = setInterval(updateTimer, 1000);
-		setComponent();
-		updateTimer();
-		adatLoop();
+		
+		setTimeout(
+		function()
+		{
+			Resi = setInterval( canvasResi, 30 );
+			timeLeft = MaxTime;
+			timer = setInterval(updateTimer, 1000);
+			setComponent();
+			updateTimer();
+			adatLoop();
+		},2000);
 	});
 	
 	$(".n_gomb").click(
@@ -296,7 +301,6 @@ $(document).on("mouseup" , function(e)
 			adatok[i].xpoz = -1000;
 			adatok[i].ypoz = -1000;
 			adatok[i].pAd = false;
-			//adatok[i].elet = 0; --> Se ez, se a slice nem működik és fogalmam sincs, hogy miért.
 			$(".pont_holder").html("A pontjaid száma: "+pont );
 		}
 	}
@@ -442,15 +446,11 @@ function gameOver()
 			"opacity":"1"
 		});
 		$(".k_gomb").html("A játék újratöltése");
+		$(".vegso_pont_holder").html("A pontjaid száma: "+pont );
+		
+		$(".vegso_pont_holder").show();
 		$(".jatekkezdo_doboz").show();
 		$(".jatekkezdo_doboz").animate({"opacity":"1"},2000);
 		
 	});
-	setTimeout(
-	function()
-	{
-		alert("A pontjaid száma: "+pont );
-		pont = 0;
-		$(".pont_holder").html("A pontjaid száma: "+pont );
-	}, 2000 );
 }
